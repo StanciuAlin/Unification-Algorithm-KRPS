@@ -3,6 +3,7 @@ from typing import Optional
 from src.models.term import Term, Variable, Function
 from src.logic.substitution import Substitution
 from src.models.errors import UnificationError
+from src.utils.printer import Printer
 
 
 class Unifier:
@@ -51,7 +52,10 @@ class Unifier:
         # occurs check
         if term.occurs(var.name):
             raise UnificationError(
-                f"Occurs check failed: {var} occurs in {term}")
+                Printer.get_colored_text(
+                    f"Occurs check failed: variable '{var}' occurs in term '{term}'",
+                    color="red",
+                    bold=True))
 
         # extend substitution
         return subst.extend(var.name, term)

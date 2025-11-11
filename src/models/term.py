@@ -24,28 +24,38 @@ class Term:
         """
         text = text.strip()
 
-        # Case 1: Constant or simple variable
+        # Case 1: atomic term (no parentheses)
         if "(" not in text:
-            if text and text[0].isupper():
-                return Constant(text)
-            else:
+            if text[0].isupper():
                 return Variable(text)
+            else:
+                return Constant(text)
 
-        # Case 2: Function or predicate with arguments
+        # Case 2: function or predicate
         match = re.match(r'(\w+)\((.*)\)', text)
         if not match:
-            raise ValueError(f"Invalid format for term: {text}")
+            raise ValueError(f"Invalid term format: {text}")
 
         name, args_str = match.groups()
         args = []
 
-        # Split arguments by commas, handling nested functions (without unuseful spaces)
-        for arg in args_str.split(","):
-            arg = arg.strip()
-            if arg:
-                args.append(Term.from_string(arg))
+        # Handle nested parentheses safely
+        depth, current = 0, ""
+        for char in args_str:
+            if char == "," and depth == 0:
+                args.append(current.strip())
+                current = ""
+            else:
+                if char == "(":
+                    depth += 1
+                elif char == ")":
+                    depth -= 1
+                current += char
+        if current:
+            args.append(current.strip())
 
-        return Function(name, args)
+        parsed_args = [Term.from_string(arg) for arg in args]
+        return Function(name, parsed_args)
 
     def __repr__(self):
         return str(self)
