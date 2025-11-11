@@ -95,6 +95,85 @@ def run_all_tests():
     except UnificationError as e:
         print("\tUnificationError:", e)
 
+    # 11. King(x), King(John) -> x = John
+    try:
+        print("\nTest 11: Unifying King(x) and King(John)")
+        s11 = u.unify(Function("King", [Variable("x")]),
+                      Function("King", [Constant("John")]))
+        print("    Unifier =", s11)
+    except UnificationError as e:
+        print("\tUnificationError:", e)
+
+    # 12. even(4), even(X) -> X = 4
+    try:
+        print("\nTest 12: Unifying even(4) and even(X)")
+        s12 = u.unify(Function("even", [Variable("4")]),
+                      Function("even", [Constant("X")]))
+        print("    Unifier =", s12)
+    except UnificationError as e:
+        print("\tUnificationError:", e)
+
+    # 13. MGU of q(a, Y, h(k(W))) and q(W, h(Z), h(Z)) -> W = a, Y = h(a), Z = k(a)
+    try:
+        print("\nTest 13: Unifying q(a, Y, h(k(W))) and q(W, h(Z), h(Z))")
+        s13 = u.unify(
+            Function("q", [Constant("a"), Variable("Y"), Function(
+                "h", [Function("k", [Variable("W")])])]),
+            Function("q", [Variable("W"), Function(
+                "h", [Variable("Z")]), Function("h", [Variable("Z")])])
+        )
+        print("    Unifier =", s13)
+    except UnificationError as e:
+        print("\tUnificationError:", e)
+
+    # 14. likes(Sarah, Y) and likes(Sarah, chocolate) -> Y = chocolate
+    try:
+        print("\nTest 14: Unifying likes(Sarah, Y) and likes(Sarah, chocolate)")
+        s14 = u.unify(
+            Function("likes", [Constant("Sarah"), Variable("Y")]),
+            Function("likes", [Constant("Sarah"), Constant("chocolate")])
+        )
+        print("    Unifier =", s14)
+    except UnificationError as e:
+        print("\tUnificationError:", e)
+
+    # 15. {p(b, X, f(g(Z))) and p(Z, f(Y), f(Y))} -> {X=f(Y), Z=b}
+    try:
+        print("\nTest 15: Unifying p(b, X, f(g(Z))) and p(Z, f(Y), f(Y))")
+        s15 = u.unify(
+            Function("p", [Constant("b"), Variable("X"), Function(
+                "f", [Function("g", [Variable("Z")])])]),
+            Function("p", [Variable("Z"), Function(
+                "f", [Variable("Y")]), Function("f", [Variable("Y")])])
+        )
+        print("\nTest 15:", s15)
+    except UnificationError as e:
+        print("\tUnificationError:", e)
+
+    # 16. {p(f(a), g(Y)) and p(X, X)} -> fail
+    try:
+        s16 = u.unify(
+            Function("p", [Function("f", [Constant("a")]),
+                           Function("g", [Variable("Y")])]),
+            Function("p", [Variable("X"), Variable("X")])
+        )
+        print("\nTest 16:", s16)
+    except UnificationError as e:
+        print("\tUnificationError:", e)
+
+    # 17. Q(a, g(x, a), f(y)), Q(a, g(f(b), a), x)} -> {x=f(b), y=f(f(b))}
+    try:
+        print("\nTest 17: Unifying Q(a, g(x, a), f(y)) and Q(a, g(f(b), a), x)")
+        s17 = u.unify(
+            Function("Q", [Constant("a"), Function(
+                "g", [Variable("x"), Constant("a")]), Function("f", [Variable("y")])]),
+            Function("Q", [Constant("a"), Function(
+                "g", [Function("f", [Constant("b")]), Constant("a")]), Variable("x")])
+        )
+        print("    Unifier =", s17)
+    except UnificationError as e:
+        print("\tUnificationError:", e)
+
 
 if __name__ == "__main__":
     run_all_tests()
