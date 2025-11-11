@@ -1,5 +1,13 @@
 
-def print_header(title: str):
-    print("=" * 50)
+def print_header(header: str, domain: str = "KRPS", extra: str = ""):
+    print("\n" + "=" * 75)
+    print(header)
+    print(f"\n\t\t{domain}")
+    print(f"\t\t{extra}")
+    print("=" * 75 + "\n")
+
+
+def print_title(title: str):
+    print("\n" + "=" * 75)
     print(title)
-    print("=" * 50)
+    print("=" * 75 + "\n")

@@ -6,7 +6,7 @@ from src.models.errors import UnificationError
 
 def run_all_tests():
     u = Unifier()
-    print("Running Unification Tests...")
+    print("Running Unification tests...")
 
     # 1. X = a
     try:

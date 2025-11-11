@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Any
+import re
 
 
 class Term:
@@ -11,6 +12,43 @@ class Term:
 
     def apply_substitution(self, substitution: 'Substitution') -> 'Term':
         raise NotImplementedError
+
+    @staticmethod
+    def from_string(text: str) -> 'Term':
+        """
+        Creates a Term object from its string representation. Examples:
+        - King(x)
+        - Loves(John, y)
+        - John
+        - x
+        """
+        text = text.strip()
+
+        # Case 1: Constant or simple variable
+        if "(" not in text:
+            if text and text[0].isupper():
+                return Constant(text)
+            else:
+                return Variable(text)
+
+        # Case 2: Function or predicate with arguments
+        match = re.match(r'(\w+)\((.*)\)', text)
+        if not match:
+            raise ValueError(f"Invalid format for term: {text}")
+
+        name, args_str = match.groups()
+        args = []
+
+        # Split arguments by commas, handling nested functions (without unuseful spaces)
+        for arg in args_str.split(","):
+            arg = arg.strip()
+            if arg:
+                args.append(Term.from_string(arg))
+
+        return Function(name, args)
+
+    def __repr__(self):
+        return str(self)
 
 
 @dataclass(frozen=True)

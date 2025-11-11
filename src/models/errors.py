@@ -18,3 +18,10 @@ class UnificationError(Exception):
         if self.t1 is not None and self.t2 is not None:
             base += f" | Terms: {self.t1}, {self.t2}"
         return base
+
+
+class InputError(Exception):
+    """Raised for errors in user input handling."""
+
+    def __init__(self, message="Error in input handling"):
+        super().__init__(message)
