@@ -168,6 +168,10 @@ The file covers:
 
 ## 8. Future Enhancements
 
-- Clause data structures and a full resolution loop.
+- GUI/Web UI for interactive unification trees and proof steps.
+- CNF pipeline and a full resolution loop.
 - Support for additional syntax sugar (e.g., infix operators or quantifiers).
+- Standardizing apart & variable renaming across clauses.
 - Richer CLI history / logging and optional batch mode for automated grading.
+- Performance: occurs-check variants, benchmarking.
+
