@@ -1,20 +1,21 @@
-import re
 from src.logic.parser import ParserAIMA
 from src.models.errors import InputError
-from src.utils.printer import Printer
 from src.models.term import Term
+from src.utils.printer import Printer
 from tests.test_unification import run_all_tests
 
 
 class InputHandler:
-    """Handles user input and auto-detection for AIMA-style unification."""
+    """Console-facing orchestrator that validates, parses, and routes user expressions to the unifier CLI."""
 
     def __init__(self):
+        """Initialize the handler and print CLI instructions."""
+        Printer.print_header_app()
         Printer.print_cli_info()
 
-    # Check parentheses balance
     @staticmethod
     def _check_parentheses_balance(expr: str):
+        """Raise `InputError` when parentheses counts do not match."""
         open_count = expr.count("(")
         close_count = expr.count(")")
         if open_count != close_count:
@@ -22,7 +23,6 @@ class InputHandler:
                 f"Unbalanced parentheses: found {open_count} '(' and {close_count} ')'"
             )
 
-    # Auto-detect type (term vs literal)
     @staticmethod
     def detect_input_type(text: str) -> str:
         """Detects if an input represents a term or literal using ParserAIMA."""
@@ -104,6 +104,7 @@ class InputHandler:
 
     # Decide whether it's literal or term mode automatically
     def _auto_set_mode(self, selection: str, expr1: str, expr2: str) -> str:
+        """Resolve ambiguous menu selections by inferring a suitable mode from the inputs."""
         if selection == "3":  # auto-detect
             type1 = self.detect_input_type(expr1)
             type2 = self.detect_input_type(expr2)

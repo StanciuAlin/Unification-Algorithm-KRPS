@@ -1,19 +1,20 @@
 from __future__ import annotations
+
+import re
 from dataclasses import dataclass
 from typing import List
-import re
+
 from src.models.term import Term
 
 
 @dataclass(frozen=True)
 class Literal:
-    """AIMA-style Literal: a (possibly negated) predicate applied to terms."""
+    """Predicate symbol applied to ordered arguments with an optional negation flag, per AIMA notation."""
 
     name: str
     arguments: List[Term]
     negated: bool = False
 
-    # --- Constructors ---
     @staticmethod
     def from_string(text: str) -> Literal:
         """
@@ -36,7 +37,7 @@ class Literal:
         parsed_args = [Term.from_string(arg) for arg in args]
         return Literal(name, parsed_args, negated)
 
-    # --- Logic operations ---
+    # Logic operations
     def negate(self) -> Literal:
         """Return the negation of this literal."""
         return Literal(self.name, self.arguments, not self.negated)
@@ -63,11 +64,13 @@ class Literal:
             and all(a1 == a2 for a1, a2 in zip(self.arguments, other.arguments))
         )
 
-    # --- Display ---
+    # Display
     def __str__(self) -> str:
+        """Return the literal in standard prefix-negation format."""
         sign = "¬" if self.negated else ""
         args = ", ".join(str(a) for a in self.arguments)
         return f"{sign}{self.name}({args})"
 
     def __repr__(self):
+        """Return developer-friendly representation identical to `__str__`."""
         return str(self)

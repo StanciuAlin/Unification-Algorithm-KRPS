@@ -1,5 +1,5 @@
 class UnificationError(Exception):
-    """Custom exception raised when unification fails."""
+    """Exception capturing the reason and optional offending terms when unification cannot proceed."""
 
     def __init__(self, message: str, t1=None, t2=None):
         """
@@ -21,7 +21,8 @@ class UnificationError(Exception):
 
 
 class InputError(Exception):
-    """Raised for errors in user input handling."""
+    """Exception raised for malformed CLI inputs before parsing or unification takes place."""
 
     def __init__(self, message="Error in input handling"):
+        """Initialize input error with a helpful message."""
         super().__init__(message)

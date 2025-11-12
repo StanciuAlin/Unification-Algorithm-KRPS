@@ -1,5 +1,6 @@
-from colorama import Fore, Style, init
 import time
+
+from colorama import Fore, Style, init
 
 # Initialize colorama (so colors reset automatically after each print)
 init(autoreset=True)
@@ -19,7 +20,7 @@ COLORS = {
 
 
 class Printer:
-    """Utility printer for styling CLI messaging throughout the project."""
+    """Centralized helper that prints colored, styled CLI messages and shared UI widgets for the app."""
 
     SEPARATOR_LENGTH = 75
 

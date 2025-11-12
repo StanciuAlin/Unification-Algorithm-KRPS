@@ -1,12 +1,13 @@
-from src.models.literal import Literal
-from src.models.term import Variable, Constant, Function
+from src.logic.parser import ParserAIMA
 from src.logic.unifier import Unifier
 from src.models.errors import UnificationError
+from src.models.literal import Literal
+from src.models.term import Constant, Function, Variable
 from src.utils.printer import Printer
-from src.logic.parser import ParserAIMA
 
 
 def run_all_tests():
+    """Execute the curated suite of term and literal unification demonstrations."""
     u = Unifier()
     p = ParserAIMA()
 

@@ -1,16 +1,19 @@
 from __future__ import annotations
+
 from typing import Optional
-from src.models.term import Term, Variable, Function
-from src.models.literal import Literal
+
 from src.logic.substitution import Substitution
 from src.models.errors import UnificationError
+from src.models.literal import Literal
+from src.models.term import Function, Term, Variable
 from src.utils.printer import Printer
 
 
 class Unifier:
-    """AIMA-style implementation of the unification algorithm for FOL terms and literals."""
+    """Deterministic implementation of the AIMA unification procedure for both terms and literals."""
 
     def __init__(self, verbose: bool = False):
+        """Initialize the unifier; enable verbose printing when `verbose` is True."""
         self.verbose = verbose
 
     # UNIFY for Terms
@@ -93,5 +96,6 @@ class Unifier:
 
     # Utility and debugging
     def debug(self, msg: str):
+        """Print a debug message when verbose mode is enabled."""
         if self.verbose:
             Printer.print_text_color("cyan", msg)

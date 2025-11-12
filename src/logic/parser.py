@@ -1,21 +1,22 @@
 import re
-from src.models.term import Variable, Constant, Function, Term
+
 from src.models.literal import Literal
+from src.models.term import Constant, Function, Term, Variable
 
 
 class ParserAIMA:
     """
-    Parse according to AIMA (Russell & Norvig) conventions:
-    - Variables: lowercase letter (x, y, z)
-    - Constants: uppercase letter (John, Mary, Dog)
-    - Functions: lowercase letter followed by parentheses (f(x), g(x, y))
-    - Predicates/Literals: uppercase letter followed by parentheses (Loves(John, x))
-    - Negation: symbols ¬ or ~ (prefix)
+    Utility that classifies and parses strings into Term or Literal objects following the AIMA syntax rules.
+        - Variables: lowercase letter (x, y, z)
+        - Constants: uppercase letter (John, Mary, Dog)
+        - Functions: lowercase letter followed by parentheses (f(x), g(x, y))
+        - Predicates/Literals: uppercase letter followed by parentheses (Loves(John, x))
+        - Negation: symbols ¬ or ~ (prefix)
     """
 
-    # Find out type of expression
     @staticmethod
     def detect_type(expr: str) -> str:
+        """Classify the expression as variable, constant, function, literal, or unknown."""
         expr = expr.strip()
 
         if expr.startswith(("¬", "~")):
@@ -40,9 +41,9 @@ class ParserAIMA:
 
         return "unknown"
 
-    # Split arguments respecting nested parentheses
     @staticmethod
     def _split_arguments(args_str: str):
+        """Return a list of argument substrings while respecting nested parentheses."""
         args, current, depth = [], "", 0
         for char in args_str:
             if char == ',' and depth == 0:
@@ -58,9 +59,9 @@ class ParserAIMA:
             args.append(current.strip())
         return args
 
-    # Parse TERM (Variable, Constant, Function)
     @staticmethod
     def parse_term(text: str) -> Term:
+        """Parse a textual representation into a `Term` instance (variable, constant, or function)."""
         text = text.strip()
 
         # Variable
@@ -81,9 +82,9 @@ class ParserAIMA:
 
         raise ValueError(f"Invalid term format (AIMA): {text}")
 
-    # Parse LITERAL (Predicate, possibly negated)
     @staticmethod
     def parse_literal(text: str) -> Literal:
+        """Parse a predicate string (optionally negated) into a `Literal`."""
         text = text.strip()
         negated = False
 
@@ -102,9 +103,9 @@ class ParserAIMA:
                 for arg in ParserAIMA._split_arguments(args_str)]
         return Literal(name, args, negated)
 
-    # Auto-detect and parse expression (Term or Literal)
     @staticmethod
     def parse_expression(text: str):
+        """Auto-detect expression type and parse it as either a literal or term."""
         kind = ParserAIMA.detect_type(text)
         if kind in {"literal", "literal_negated"}:
             return ParserAIMA.parse_literal(text)

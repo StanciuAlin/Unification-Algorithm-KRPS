@@ -1,17 +1,15 @@
-import time
 from src.io.input_handler import InputHandler
 from src.logic.parser import ParserAIMA
 from src.logic.unifier import Unifier
-from src.models.errors import UnificationError, InputError
+from src.models.errors import InputError, UnificationError
 from src.utils.printer import Printer
 
 
 def main():
+    """CLI entry point for running the unification playground."""
 
     handler = InputHandler()
     unifier = Unifier(verbose=False)
-
-    Printer.print_header_app()
 
     while True:
         Printer.print_menu()
@@ -27,9 +25,9 @@ def main():
                 result = unifier.unify(t1, t2)
                 if result and not result.is_empty():
                     Printer.print_success(
-                        f"✅ Most General Unifier (MGU): {result}\n")
+                        f"Most General Unifier (MGU): {result}\n")
                 else:
-                    Printer.print_error("❌ The terms cannot be unified.\n")
+                    Printer.print_error("The terms cannot be unified.\n")
 
             # LITERAL UNIFICATION
             elif choice == "2":
@@ -40,9 +38,9 @@ def main():
                 result = unifier.unify_literals(l1, l2)
                 if result:
                     Printer.print_success(
-                        f"✅ Literals unified successfully: {result}\n")
+                        f"Literals unified successfully: {result}\n")
                 else:
-                    Printer.print_error("❌ Literals cannot be unified.\n")
+                    Printer.print_error("Literals cannot be unified.\n")
 
             # INVALID / UNEXPECTED CHOICE
             else:
@@ -53,7 +51,7 @@ def main():
         except InputError as ie:
             Printer.print_error(f"  Input Error: {ie}")
         except UnificationError as ue:
-            Printer.print_error(f"❌ Unification Error: {ue}")
+            Printer.print_error(f"Unification Error: {ue}")
         except Exception as e:
             Printer.print_error(f"  Unexpected Error: {e}")
 

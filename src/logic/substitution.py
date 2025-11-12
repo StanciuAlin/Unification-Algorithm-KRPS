@@ -1,26 +1,32 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import Dict
+
 from src.models.term import Term, Variable
 
 
 @dataclass(frozen=True)
 class Substitution:
-    """AIMA-style substitution: mapping from variable names to terms."""
+    """Immutable mapping from variable names to replacement terms used to build most-general unifiers."""
 
     mapping: Dict[str, Term]
 
     def __init__(self, mapping: Dict[str, Term] | None = None):
+        """Create a substitution; copies `mapping` to keep instances immutable."""
         object.__setattr__(self, "mapping", dict(mapping or {}))
 
     # Basic accessors
     def contains(self, var_name: str) -> bool:
+        """Return True if the variable name exists in the substitution."""
         return var_name in self.mapping
 
     def get(self, var_name: str) -> Term:
+        """Return the term currently mapped to `var_name`."""
         return self.mapping[var_name]
 
     def is_empty(self) -> bool:
+        """Return True if the substitution contains no mappings."""
         return len(self.mapping) == 0
 
     # Core operations
@@ -57,6 +63,7 @@ class Substitution:
 
     # String representation
     def __str__(self) -> str:
+        """Return the substitution in `{ var / term }` notation."""
         if not self.mapping:
             return "{}"
         # Here can be {t} / {v} depending on preference
@@ -66,4 +73,5 @@ class Substitution:
         return "{ " + ", ".join(pairs) + " }"
 
     def __repr__(self):
+        """Return the developer representation mirroring `__str__`."""
         return str(self)
