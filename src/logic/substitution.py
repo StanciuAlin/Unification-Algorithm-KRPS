@@ -69,7 +69,7 @@ class Substitution:
         # Here can be {t} / {v} depending on preference
         # But, usually written as {v / t} according to AIMA style
         # Is read as "variable v is substituted/replaced by term t"
-        pairs = [f"{v} / {t}" for v, t in self.mapping.items()]
+        pairs = [f"{var} / {term}" for var, term in self.mapping.items()]
         return "{ " + ", ".join(pairs) + " }"
 
     def __repr__(self):

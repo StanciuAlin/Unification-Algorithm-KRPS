@@ -49,11 +49,11 @@ def main():
                 )
 
         except InputError as ie:
-            Printer.print_error(f"  Input Error: {ie}")
+            Printer.print_error(f"Input Error: {ie}")
         except UnificationError as ue:
             Printer.print_error(f"Unification Error: {ue}")
         except Exception as e:
-            Printer.print_error(f"  Unexpected Error: {e}")
+            Printer.print_error(f"Unexpected Error: {e}")
 
         Printer.continue_or_exit()
 
