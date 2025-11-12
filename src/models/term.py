@@ -5,57 +5,62 @@ import re
 
 
 class Term:
-    """Base class for all terms in FOL."""
+    """Base class for all terms in First-Order Logic (AIMA convention)."""
 
     def occurs(self, var_name: str) -> bool:
+        """Check if a variable occurs inside the term."""
         raise NotImplementedError
 
     def apply_substitution(self, substitution: 'Substitution') -> 'Term':
+        """Apply a substitution mapping to this term."""
         raise NotImplementedError
 
     @staticmethod
     def from_string(text: str) -> 'Term':
         """
-        Creates a Term object from its string representation. Examples:
-        - King(x)
-        - Loves(John, y)
+        Parse a term from string using AIMA-style syntax.
+        Examples:
+        - Father(John, x)
+        - Loves(Mary, y)
         - John
         - x
         """
         text = text.strip()
 
-        # Case 1: atomic term (no parentheses)
+        # Case 1: atomic symbol (no parentheses)
         if "(" not in text:
-            if text[0].isupper():
+            if text[0].islower():
                 return Variable(text)
             else:
                 return Constant(text)
 
-        # Case 2: function or predicate
+        # Case 2: function term
         match = re.match(r'(\w+)\((.*)\)', text)
         if not match:
             raise ValueError(f"Invalid term format: {text}")
 
         name, args_str = match.groups()
-        args = []
+        args = Term._split_arguments(args_str)
+        parsed_args = [Term.from_string(arg) for arg in args]
+        return Function(name, parsed_args)
 
-        # Handle nested parentheses safely
-        depth, current = 0, ""
+    @staticmethod
+    def _split_arguments(args_str: str) -> List[str]:
+        """Split arguments while respecting nested parentheses."""
+        args, current, depth = [], "", 0
         for char in args_str:
-            if char == "," and depth == 0:
+            if char == ',' and depth == 0:
                 args.append(current.strip())
                 current = ""
             else:
-                if char == "(":
+                if char == '(':
                     depth += 1
-                elif char == ")":
+                elif char == ')':
                     depth -= 1
                 current += char
-        if current:
+        if current.strip():
             args.append(current.strip())
-
-        parsed_args = [Term.from_string(arg) for arg in args]
-        return Function(name, parsed_args)
+        return args
 
     def __repr__(self):
         return str(self)
@@ -79,7 +84,7 @@ class Variable(Term):
 
 @dataclass(frozen=True)
 class Constant(Term):
-    value: Any
+    symbol: Any
 
     def occurs(self, var_name: str) -> bool:
         return False
@@ -88,7 +93,7 @@ class Constant(Term):
         return self
 
     def __str__(self) -> str:
-        return str(self.value)
+        return str(self.symbol)
 
 
 @dataclass(frozen=True)

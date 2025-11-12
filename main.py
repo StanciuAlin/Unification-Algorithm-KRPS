@@ -1,47 +1,63 @@
+import time
 from src.io.input_handler import InputHandler
+from src.logic.parser import ParserAIMA
 from src.logic.unifier import Unifier
-from src.models.errors import UnificationError
-from src.models.errors import InputError
+from src.models.errors import UnificationError, InputError
 from src.utils.printer import Printer
-from tests.test_unification import run_all_tests
 
 
 def main():
-    Printer.print_header(header=" " * 20 + "Unification Project - KRPS",
-                         domain=" " * 4 + "Knowledge Representation and Problem Solving",
-                         extra=" " * 30 + "AIAC1 | Semester 1")
-    run_all_tests()
 
     handler = InputHandler()
-    unifier = Unifier()
-    delimiter = "-" * 15
+    unifier = Unifier(verbose=False)
+
+    Printer.print_header_app()
+
     while True:
+        Printer.print_menu()
+        choice, expr1, expr2 = handler.interpret_selection()
+
         try:
-            # Read two terms from user input and attempt to unify them.
-            t1 = handler.read_term("\n  1️⃣  Write the first term: ")
-            t2 = handler.read_term("  2️⃣  Write the second term: ")
+            # TERM UNIFICATION
+            if choice == "1":
+                Printer.print_info("Mode: Term Unification\n")
+                t1 = ParserAIMA.parse_term(expr1)
+                t2 = ParserAIMA.parse_term(expr2)
 
-            Printer.print_text_color(
-                f"\n⚙️  Running Unification Algorithm for \'{t1}\' and \'{t2}\' ",
-                color="black",
-                bold=True,
-                end=""
-            )
-            Printer.print_three_dots()  # Simulate processing time
-            result = unifier.unify(t1, t2)
+                result = unifier.unify(t1, t2)
+                if result and not result.is_empty():
+                    Printer.print_success(
+                        f"✅ Most General Unifier (MGU): {result}\n")
+                else:
+                    Printer.print_error("❌ The terms cannot be unified.\n")
 
-            if result:
-                Printer.print_success(
-                    f"Most General Unifier (MGU) = {result}\n")
+            # LITERAL UNIFICATION
+            elif choice == "2":
+                Printer.print_info("Mode: Literal Unification\n")
+                l1 = ParserAIMA.parse_literal(expr1)
+                l2 = ParserAIMA.parse_literal(expr2)
+
+                result = unifier.unify_literals(l1, l2)
+                if result:
+                    Printer.print_success(
+                        f"✅ Literals unified successfully: {result}\n")
+                else:
+                    Printer.print_error("❌ Literals cannot be unified.\n")
+
+            # INVALID / UNEXPECTED CHOICE
             else:
-                Printer.print_error("\nThe terms cannot be unified.\n")
+                Printer.print_text_color(
+                    "  Invalid choice. Please select 1, 2, 3, 4 or E.", "yellow"
+                )
 
         except InputError as ie:
-            Printer.print_error(f"Error: {ie}")
+            Printer.print_error(f"  Input Error: {ie}")
         except UnificationError as ue:
-            Printer.print_error(f"Error: {ue}")
-        except Exception as e:  # Catch-all for unexpected errors
-            Printer.print_error(f"Error: {e}")
+            Printer.print_error(f"❌ Unification Error: {ue}")
+        except Exception as e:
+            Printer.print_error(f"  Unexpected Error: {e}")
+
+        Printer.continue_or_exit()
 
 
 if __name__ == "__main__":

@@ -1,28 +1,13 @@
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import List, Optional, Union
-from src.models.term import Term, Function
+from typing import Optional, Union
+from src.models.literal import Literal
+from src.models.term import Function
 from src.logic.unifier import Unifier
 from src.logic.substitution import Substitution
 from src.models.errors import UnificationError
 
 
-@dataclass(frozen=True)
-class Literal:
-    name: str
-    arguments: List[Term]
-    negated: bool = False
-
-    def negate(self) -> 'Literal':
-        return Literal(self.name, self.arguments, not self.negated)
-
-    def __str__(self):
-        sign = "¬" if self.negated else ""
-        args = ", ".join(str(a) for a in self.arguments)
-        return f"{sign}{self.name}({args})"
-
-
-class ResolutionHelper:
+class Resolution:
     """Very small example to show how unification is used in resolution."""
 
     def __init__(self):

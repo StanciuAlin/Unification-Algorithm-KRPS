@@ -1,46 +1,69 @@
 from __future__ import annotations
-from typing import Dict
 from dataclasses import dataclass
+from typing import Dict
 from src.models.term import Term, Variable
 
 
-@dataclass
+@dataclass(frozen=True)
 class Substitution:
-    """Represents a mapping from variable names to terms."""
+    """AIMA-style substitution: mapping from variable names to terms."""
+
     mapping: Dict[str, Term]
 
-    def __init__(self, mapping=None):
-        if mapping is None:
-            mapping = {}
-        self.mapping = dict(mapping)
+    def __init__(self, mapping: Dict[str, Term] | None = None):
+        object.__setattr__(self, "mapping", dict(mapping or {}))
 
+    # Basic accessors
     def contains(self, var_name: str) -> bool:
         return var_name in self.mapping
 
     def get(self, var_name: str) -> Term:
         return self.mapping[var_name]
 
-    def extend(self, var_name: str, term: Term) -> 'Substitution':
+    def is_empty(self) -> bool:
+        return len(self.mapping) == 0
+
+    # Core operations
+    def extend(self, var_name: str, term: Term) -> Substitution:
+        """
+        Return a new substitution extended with {var_name / term}.
+        Avoid self-mapping (x/x) to prevent infinite recursion.
+        """
+        if isinstance(term, Variable) and term.name == var_name:
+            return self  # no change
         new_map = dict(self.mapping)
         new_map[var_name] = term
         return Substitution(new_map)
 
     def apply(self, term: Term) -> Term:
+        """Apply this substitution to a term."""
         return term.apply_substitution(self)
 
-    def compose(self, other: 'Substitution') -> 'Substitution':
-        """Compose two substitutions: apply other, then self."""
-        new_map = {v: self.apply(t) for v, t in other.mapping.items()}
+    def apply_to_literal(self, literal: 'Literal') -> 'Literal':
+        """Apply substitution to a literal."""
+        return literal.apply_substitution(self)
+
+    def compose(self, other: Substitution) -> Substitution:
+        """
+        Compose two substitutions: self ∘ other means
+        apply self, then apply other to the result.
+        """
+        # Apply self to all terms in other
+        composed = {v: self.apply(t) for v, t in other.mapping.items()}
+        # Add mappings from self
         for v, t in self.mapping.items():
-            new_map[v] = t
-        return Substitution(new_map)
+            composed[v] = t
+        return Substitution(composed)
 
-    def is_empty(self) -> bool:
-        return len(self.mapping) == 0
-
-    def __str__(self):
+    # String representation
+    def __str__(self) -> str:
         if not self.mapping:
             return "{}"
-        # pairs = [f"{v} -> {t}" for v, t in self.mapping.items()]
-        pairs = [f"{t} / {v}" for v, t in self.mapping.items()]
+        # Here can be {t} / {v} depending on preference
+        # But, usually written as {v / t} according to AIMA style
+        # Is read as "variable v is substituted/replaced by term t"
+        pairs = [f"{v} / {t}" for v, t in self.mapping.items()]
         return "{ " + ", ".join(pairs) + " }"
+
+    def __repr__(self):
+        return str(self)
