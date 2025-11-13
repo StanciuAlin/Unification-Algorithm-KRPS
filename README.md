@@ -44,7 +44,7 @@ Key implications:
 1. **Parser-driven detection:** `ParserAIMA.detect_type` uses these casing rules to distinguish terms from literals automatically.
 2. **Consistency across CLI/tests:** prompts, examples, and assertions all reuse the same convention, so there is no mismatch between documentation and behavior.
 3. **Occurs-check clarity:** because variables are always lowercase, the occurs-check quickly identifies self-referential substitutions like `x / f(x)`.
-4. **Notation convention used:** the substitution `{ a / X }` means “replace the variable `X` with the constant `a`.” This is the inverse display order of the classic AIMA notation `{ X / a }`, but both convey the exact same mapping.
+4. **Notation convention used:** the substitution `{ a / X }` means “replace the variable `a` with the constant `X`.” This is the inverse display order of the classic AIMA notation `{ X / a }`, but both convey the exact same mapping.
 
 ### Clean Architecture Principles
 
